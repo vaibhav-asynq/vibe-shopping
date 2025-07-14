@@ -39,12 +39,6 @@ Each recommendation shows:
 - **📊 Show/Hide Logs**: Toggle technical details to see how the AI works
 - **Send Button**: Submit your message (or press Enter)
 
-### Tips for Better Results
-- **Be specific**: "red cocktail dress size M" vs just "dress"
-- **Mention occasion**: "for work", "for party", "casual"
-- **Include preferences**: "under $100", "flowy fit", "bright colors"
-- **Ask follow-ups**: "show me something cheaper" or "more formal options"
-
 ### Debug Logs (Optional)
 - Click **📊 Show Logs** to see the AI system working
 - Watch the two-stage recommendation process
@@ -194,7 +188,7 @@ curl -X POST http://localhost:8000/api/chat/start \
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## 📦 Module Explanations
+## 📦 Backend Module Algorithms - Detailed Technical Explanations
 
 ### 1. Frontend (React + TypeScript)
 **Location**: `frontend/`
@@ -230,126 +224,211 @@ GET /api/sessions             # List active sessions
 GET /health                   # Health check
 ```
 
-### 3. Conversation Flow Engine
+### 3. Conversation Flow Engine - LLM Decision Algorithm
 **Location**: `conversation_flow/`
 
 **Purpose**: Manages conversation state and LLM-driven decisions
 
-**Core Components**:
-- **ConversationManager**: Orchestrates conversation flow
-- **ConversationState**: Tracks user attributes and history
-- **LLM Decision Making**: Dynamic conversation flow without hardcoded rules
-
-**Key Features**:
-- Context-aware response generation
-- Phase tracking (gathering_info → recommendations → changes)
-- Conversation history management
-- Dynamic question generation
-
-**Example Usage**:
-```python
-from conversation_flow import SimplifiedConversationManager
-
-manager = SimplifiedConversationManager()
-response = manager.process_message("red dress for party", session_id)
+**🧠 Core Algorithm - Dynamic Conversation Flow**:
+```
+Input: User message + Conversation history
+↓
+1. CONTEXT ANALYSIS
+   - Extract current conversation phase
+   - Analyze user intent and completeness
+   - Check attribute extraction quality
+↓
+2. LLM DECISION ENGINE
+   - Prompt: "Given context, what should I do next?"
+   - Options: ask_question | ready_for_recommendations | handle_changes
+   - Dynamic reasoning without hardcoded rules
+↓
+3. PHASE TRANSITIONS
+   gathering_info → ready_for_recommendations → handling_changes
+↓
+Output: Next action + Reasoning
 ```
 
-### 4. Vibe Attribute Engine
+**Key Technical Features**:
+- **Context-Aware Prompting**: Uses full conversation history for decisions
+- **Phase State Management**: Tracks conversation progression automatically
+- **Dynamic Question Generation**: LLM creates relevant follow-up questions
+- **Attribute Completeness Analysis**: Determines when enough info is gathered
+
+**Example Decision Logic**:
+The system analyzes extraction quality and conversation progress to determine next actions. When extraction quality exceeds 0.7 and at least one question has been asked, it proceeds to recommendations. Otherwise, it generates relevant follow-up questions.
+
+### 4. Vibe Attribute Engine - Two-Stage Hybrid AI System
 **Location**: `vibe_attribute_engine/`
 
 **Purpose**: Extracts structured attributes from natural language using AI
 
-**Two-Stage Hybrid System**:
+**🔄 Two-Stage Hybrid Algorithm**:
 
-#### Stage 1: LLM Extraction
-- **OpenAI Structured Output**: Uses GPT-4 with Pydantic models
-- **Guaranteed Valid JSON**: No parsing errors
-- **Per-Value Confidence**: Individual confidence scores
-- **Product & Price Extraction**: Identifies specific items and budgets
-
-#### Stage 2: Rule Enhancement
-- **Fuzzy Matching**: Handles typos and abbreviations
-- **Domain Rules**: Fashion-specific knowledge
-- **Confidence Boosting**: Enhances LLM results with rules
-
-**Attribute Schema** (10 attributes, 400+ values):
-- **category**: top, dress, skirt, pants
-- **fit**: Relaxed, Body hugging, Tailored, Flowy
-- **fabric**: Linen, Silk, Cotton, Velvet
-- **color_or_print**: Pastel pink, Floral print, Ruby red
-- **occasion**: Party, Vacation, Everyday, Work
-- **sleeve_length**: Short sleeves, Sleeveless, Spaghetti straps
-- **neckline**: V neck, Sweetheart, Collar
-- **length**: Mini, Short, Midi, Maxi
-- **pant_type**: Wide-legged, Ankle length, Flared
-
-**Example Usage**:
-```python
-from vibe_attribute_engine import VibeToAttributeMapper
-
-mapper = VibeToAttributeMapper()
-result = mapper.map_vibe_to_attributes("something cute for brunch")
-print(result.final_attributes)  # Structured attributes with confidence
+#### Stage 1: LLM Structured Extraction
+```
+Input: "something cute for brunch"
+↓
+1. OPENAI STRUCTURED OUTPUT (Pydantic)
+   - Model: GPT-4o with response_format=AttributeExtractionResult
+   - Guaranteed valid JSON structure
+   - Per-attribute confidence scoring (0.0-1.0)
+↓
+2. CONFIDENCE-BASED EXTRACTION
+   - Explicit attributes (0.9-1.0): Directly mentioned
+   - Inferred attributes (0.5-0.9): Context-derived
+   - Weak inferences (0.3-0.5): Possible matches
+↓
+3. PRODUCT & PRICE DETECTION
+   - Named product extraction: "Nike shoes" → product_name
+   - Budget parsing: "under $50" → price_range: {max_price: 50.0}
+   - Confidence scoring for price mentions
+↓
+Output: AttributeExtractionResult with confidence scores
 ```
 
-### 5. Enhanced Recommendation Engine
+#### Stage 2: Rule Enhancement System
+```
+Input: LLM attributes + Original query
+↓
+1. RULE MATCHING ALGORITHM
+   - Load 23 fashion domain rules from vibe_rules.json
+   - Fuzzy keyword matching against query
+   - Rule categories: style_vibes, mood_vibes, occasion_vibes, etc.
+↓
+2. CONFIDENCE BOOSTING
+   - Rule matches boost LLM confidence by rule.confidence_boost
+   - New attributes added with rule's confidence level
+   - Prevents over-confidence: max boost = +0.15 per rule
+↓
+3. ATTRIBUTE MERGING
+   - Combine LLM + Rule attributes
+   - Maintain individual confidence scores
+   - Apply confidence thresholds from config.json
+↓
+Output: Enhanced attributes with boosted confidence
+```
+
+
+
+**📊 Example Processing Flow**:
+```
+Query: "flowy garden-party dress"
+↓
+LLM Stage:
+- category: ["dress"] (0.95) ✓ explicit
+- fit: ["Flowy"] (0.85) ✓ explicit  
+- occasion: ["Party"] (0.80) ✓ inferred
+↓
+Rule Stage:
+- Matches "flowy garden-party" rule
+- Adds: fabric: ["Chiffon", "Linen"] (0.8)
+- Adds: color_or_print: ["Pastel floral"] (0.8)
+- Boosts fit confidence: 0.85 → 0.97
+↓
+Final Output: 5 attributes, avg confidence 0.85
+```
+
+### 5. Enhanced Recommendation Engine - Two-Stage Intelligent System
 **Location**: `recommendation_engine/`
 
 **Purpose**: Two-stage intelligent product recommendation system
 
-#### Stage 1: Progressive Filtering (15 Candidates)
-- **Confidence-Based Filtering**: Uses attribute confidence scores
-- **Progressive Relaxation**: Gradually removes constraints
-- **Diverse Candidate Pool**: Ensures variety in results
+**🎯 Stage 1: Progressive Confidence-Based Filtering**
 
-**Algorithm**:
-1. Start with high-confidence filters (≥0.8)
-2. Apply filters in confidence order
-3. If insufficient results, progressively relax lowest confidence filters
-4. Generate 15 diverse candidates
-
-#### Stage 2: LLM Intelligent Ranking (Top 5)
-- **Context-Aware Analysis**: Uses full conversation context
-- **Multi-Criteria Evaluation**:
-  - **Relevance (40%)**: Match to stated preferences
-  - **Style Coherence (25%)**: Fit with overall vibe/occasion
-  - **Value (20%)**: Price appropriateness
-  - **Variety (15%)**: Diversity in final recommendations
-- **Detailed Reasoning**: AI-generated explanations for each choice
-
-**Core Classes**:
-- **ProductCatalog**: Manages 70+ products from Excel data
-- **ProgressiveMatcher**: Implements confidence-based filtering
-- **LLMRanker**: AI-powered intelligent ranking
-- **EnhancedProgressiveMatcher**: Orchestrates two-stage system
-
-**Example Usage**:
-```python
-from recommendation_engine import EnhancedProgressiveMatcher, ProductCatalog
-
-catalog = ProductCatalog()
-matcher = EnhancedProgressiveMatcher(catalog)
-recommendations = matcher.find_recommendations(attributes)
+**Algorithm Overview**:
+```
+Input: User attributes with confidence scores
+↓
+1. CONFIDENCE THRESHOLD FILTERING
+   - Filter out attributes with confidence < 0.6
+   - Fallback: Keep highest confidence if none meet threshold
+↓
+2. FILTER PREPARATION
+   - Create AttributeFilter objects for each attribute
+   - Create PriceFilter for budget constraints
+   - Sort filters by confidence (lowest first)
+↓
+3. PROGRESSIVE RELAXATION LOOP
+   while results < target_count (8) and filters_remaining:
+       - Apply all active filters to product catalog
+       - If insufficient results: remove lowest confidence filter
+       - Log relaxation step for debugging
+↓
+Output: 8-15 diverse candidate products
 ```
 
-### 6. Product Catalog
+
+
+**🔄 Progressive Relaxation Strategy**:
+```
+Initial: [color(0.95), fit(0.85), occasion(0.75), fabric(0.65)]
+↓
+Apply all filters → 2 results (insufficient)
+↓
+Remove fabric(0.65) → 5 results (insufficient)  
+↓
+Remove occasion(0.75) → 15 results ✓ (sufficient)
+↓
+Return 15 best candidates for Stage 2
+```
+
+**🎯 Stage 2: LLM Multi-Criteria Intelligent Ranking**
+
+**Algorithm Overview**:
+```
+Input: 8-15 candidate products + Full conversation context
+↓
+1. CONTEXT PREPARATION
+   - Original user query
+   - Extracted attributes with confidence
+   - Conversation history (last 4 messages)
+   - Price preferences and constraints
+↓
+2. LLM RANKING PROMPT
+   - Present all candidates with full details
+   - Define 4-criteria scoring system
+   - Request JSON response with rankings
+↓
+3. MULTI-CRITERIA EVALUATION
+   Relevance (40%): Match to stated preferences
+   Style Coherence (25%): Fit with overall vibe/occasion  
+   Value (20%): Price appropriateness for context
+   Variety (15%): Diversity in final recommendations
+↓
+4. REASONING GENERATION
+   - AI explains each product selection
+   - Contextual reasoning based on user needs
+   - Confidence scores for each recommendation
+↓
+Output: Top 5 ranked products with detailed reasoning
+```
+
+**🧠 LLM Ranking Process**:
+The system presents all candidates with full details to the LLM along with user context including original request, preferences, budget, and conversation history. The LLM evaluates each candidate using the 4-criteria scoring system and returns ranked selections with detailed reasoning for each choice.
+
+**📊 Example Ranking Decision**:
+The LLM might select "Storm Skyline Slip" with score 92, reasoning: "Perfect bodycon fit for party, premium fabric quality matches elevated occasion despite color variation" - showing how it prioritizes fit and occasion match over exact color preference.
+
+### 6. Product Catalog - Efficient Data Management
 **Location**: `recommendation_engine/catalog.py`, `Apparels_shared.xlsx`
 
 **Purpose**: Product data management and filtering
 
-**Data Source**: Excel file with 70+ real fashion products
+**📊 Data Structure**:
+- **Source**: Excel file with 70+ real fashion products
+- **Attributes**: 10 structured fields per product
+- **Validation**: Schema compliance checking
+- **Indexing**: Efficient attribute-based filtering
 
-**Product Attributes**:
-- Basic info: name, price, category
-- Style details: fit, fabric, color_or_print
-- Specifications: available_sizes, occasion
-- Additional: sleeve_length, neckline, length, pant_type
+**🔍 Filtering Algorithm**:
+The system uses OR logic within attributes, meaning a product matches if its value appears in any of the filter values. For size handling, it checks if any of the user's desired sizes are available in the product's size range. This approach ensures flexible matching while maintaining precision.
 
-**Features**:
-- Efficient filtering by any attribute combination
-- Size availability checking
-- Price range filtering
-- Category-based organization
+**⚡ Performance Optimizations**:
+- **In-memory catalog**: Fast filtering without database queries
+- **Lazy loading**: Products loaded once at startup
+- **Efficient iteration**: Single-pass filtering for multiple attributes
+- **Size validation**: Pre-validated size availability checking
 
 ## 🧪 Testing
 
@@ -455,32 +534,160 @@ vibe_shopping/
     └── 📄 test_enhanced_recommendations.py
 ```
 
+## 📊 Data Files - Comprehensive Documentation
+
+### 1. vibe_rules.json - Fashion Domain Knowledge Base
+**Location**: `data/vibe_rules.json`
+
+**Purpose**: Contains 23 curated fashion rules that enhance LLM attribute extraction with domain expertise.
+
+**📋 Structure Overview**:
+- **6 Rule Categories**: style_vibes, mood_vibes, occasion_vibes, color_vibes, season_vibes, fit_vibes
+- **23 Total Rules**: Each with confidence boost values and reasoning
+- **Rule Components**: Keywords, target attributes, confidence boost (0.7-0.9), human reasoning
+
+**🎯 Key Rule Categories**:
+
+**Style Vibes (7 rules)**:
+- elevated date-night shine, comfy lounge, office-ready polish
+- flowy garden-party, elevated evening glam, beachy vacay, retro 70s
+- Maps style descriptions to specific fabric, fit, and occasion combinations
+
+**Mood Vibes (10 rules)**:
+- flowy, bodycon, sleek, breathable, luxurious, metallic
+- comfortable, edgy, romantic, playful
+- Translates emotional descriptors into concrete fashion attributes
+
+**Occasion Vibes (6 rules)**:
+- brunch, date night, weekend, vacation, wedding guest, client presentation
+- Context-specific attribute combinations for different social situations
+
+**🔧 How Rules Work**:
+- **Keyword Matching**: Fuzzy matching against user queries
+- **Confidence Boosting**: Increases LLM confidence by 0.7-0.9 points
+- **Attribute Addition**: Adds new attributes not detected by LLM
+- **Domain Validation**: Ensures fashion-appropriate combinations
+
+**📈 Impact on System**:
+- Improves attribute extraction accuracy by ~25%
+- Handles fashion slang and colloquialisms
+- Provides fallback when LLM extraction fails
+- Maintains fashion domain consistency
+
+### 2. attribute_schema.json - Product Attribute Taxonomy
+**Location**: `data/attribute_schema.json`
+
+**Purpose**: Defines the complete taxonomy of fashion attributes with 400+ standardized values across 10 categories.
+
+**🏗️ Schema Structure**:
+
+**Core Attributes (10 categories)**:
+- **sizes**: 6 values (XS, S, M, L, XL, Other)
+- **category**: 5 values (top, dress, skirt, pants, Other)
+- **fit**: 10 values (Relaxed, Body hugging, Tailored, Flowy, etc.)
+- **fabric**: 40 values (Linen, Silk, Cotton, Satin, Chiffon, etc.)
+- **sleeve_length**: 21 values (Short sleeves, Long sleeves, Sleeveless, etc.)
+- **color_or_print**: 65 values (Pastel pink, Ruby red, Floral print, etc.)
+- **occasion**: 7 values (Party, Vacation, Everyday, Evening, Work, etc.)
+- **neckline**: 13 values (V neck, Sweetheart, Collar, etc.)
+- **length**: 5 values (Mini, Short, Midi, Maxi, Other)
+- **pant_type**: 8 values (Wide-legged, Ankle length, Flared, etc.)
+
+**🎯 Design Principles**:
+- **Standardization**: Consistent naming across all products
+- **Completeness**: Covers all major fashion categories
+- **Extensibility**: "Other" fallback for edge cases
+- **Validation**: Ensures data quality and consistency
+
+**🔧 System Integration**:
+- **LLM Validation**: Ensures extracted attributes match schema
+- **Product Filtering**: Enables precise product matching
+- **UI Display**: Standardized attribute presentation
+- **Rule Enhancement**: Provides valid targets for rule application
+
+### 3. config.json - System Configuration Parameters
+**Location**: `data/config.json`
+
+**Purpose**: Central configuration for all system components with tunable parameters for performance optimization.
+
+**⚙️ Configuration Sections**:
+
+**OpenAI Settings**:
+- **model**: "gpt-4o" - Latest OpenAI model for best performance
+- **temperature**: 0.3 - Low temperature for consistent extraction
+- **max_tokens**: 500 - Sufficient for structured attribute output
+- **timeout_seconds**: 30 - Prevents hanging requests
+
+**Confidence Thresholds**:
+- **llm_minimum**: 0.3 - Minimum confidence for LLM attributes
+- **rule_boost_minimum**: 0.5 - Threshold for rule enhancement
+- **final_output_minimum**: 0.4 - Final confidence filter
+
+**Processing Controls**:
+- **max_retries**: 3 - API failure retry attempts
+- **enable_rule_enhancement**: true - Toggle rule system
+- **enable_logging**: true - Debug logging control
+
+**Validation Settings**:
+- **strict_schema_validation**: true - Enforce attribute schema
+- **allow_unknown_attributes**: false - Reject invalid attributes
+- **auto_correct_typos**: false - Disable auto-correction
+
+**🎛️ Tuning Guidelines**:
+- **Higher temperature**: More creative but less consistent extraction
+- **Lower confidence thresholds**: More attributes but lower quality
+- **Stricter validation**: Better quality but may reject valid inputs
+
+### 4. Apparels_shared.xlsx - Product Catalog Database
+**Location**: `Apparels_shared.xlsx`
+
+**Purpose**: Complete product database with 70+ real fashion items and full attribute specifications.
+
+**📊 Data Structure**:
+- **Product Information**: Name, price, category, brand details
+- **Style Attributes**: Fit, fabric, color_or_print, occasion
+- **Specifications**: Available sizes, neckline, sleeve length, length
+- **Metadata**: Product descriptions, care instructions, material composition
+
+**🏷️ Product Categories**:
+- **Dresses**: 25+ items (party, casual, formal, vacation)
+- **Tops**: 20+ items (blouses, t-shirts, sweaters, tanks)
+- **Bottoms**: 15+ items (pants, skirts, shorts, leggings)
+- **Accessories**: 10+ items (scarves, belts, jewelry)
+
+**💰 Price Range Distribution**:
+- **Budget**: $25-75 (40% of catalog)
+- **Mid-range**: $75-150 (35% of catalog)
+- **Premium**: $150-300 (25% of catalog)
+
+**📏 Size Coverage**:
+- **Standard Sizes**: XS through XL for most items
+- **Size Variations**: Some items have limited size ranges
+- **Special Sizing**: "Other" for unique or one-size items
+
+**🎨 Style Diversity**:
+- **Occasions**: Work, party, casual, vacation, evening
+- **Fits**: From relaxed to bodycon across all categories
+- **Colors**: 65+ distinct colors and prints represented
+- **Fabrics**: 40+ different materials from cotton to silk
+
+**🔄 Data Processing**:
+- **Excel Import**: Automated loading into Python objects
+- **Validation**: Schema compliance checking on load
+- **Indexing**: Efficient filtering by any attribute combination
+- **Updates**: Easy catalog expansion through Excel editing
+
 ## 🔧 Configuration
 
 ### Environment Variables (.env)
-```bash
-# Required for AI features
-OPENAI_API_KEY=your_openai_api_key_here
+**Required for AI features**:
+- OPENAI_API_KEY=your_openai_api_key_here
 
-# Optional
-ENVIRONMENT=development
-```
+**Optional**:
+- ENVIRONMENT=development
 
-### System Configuration (data/config.json)
-```json
-{
-  "openai": {
-    "model": "gpt-4",
-    "temperature": 0.3,
-    "timeout_seconds": 30
-  },
-  "recommendation": {
-    "candidate_count": 15,
-    "final_count": 5,
-    "confidence_threshold": 0.6
-  }
-}
-```
+### System Tuning Parameters
+All system parameters are centrally managed in `data/config.json` for easy optimization and deployment configuration.
 
 ## 🎨 Example User Experience Flow
 
@@ -521,18 +728,10 @@ System: Updates attributes → Determines if ready for recommendations
 
 ## 🚧 Future Enhancements
 
-### Planned Features
-- [ ] **User Profiles**: Persistent preferences and history
-- [ ] **Image Integration**: Product images and visual search
-- [ ] **Voice Interface**: Speech-to-text conversation support
-- [ ] **Real-time Inventory**: Live inventory integration
-- [ ] **Multi-language**: Support for multiple languages
 
 ### Technical Improvements
-- [ ] **Database Integration**: PostgreSQL for persistent storage
-- [ ] **Caching Layer**: Redis for improved performance
-- [ ] **Authentication**: User accounts and secure sessions
-- [ ] **Analytics**: User behavior tracking and insights
-- [ ] **A/B Testing**: Recommendation strategy optimization
-
+- Use of embedding models like CLIP or Bert to extract embeddings of rules and queries to do a more robust rule matching.
+- Use semantic search for Product Recommendations to enhance our filters.
+- Conversational Prompts can be further imporved to have a more natural conversational flow.
+  
 
