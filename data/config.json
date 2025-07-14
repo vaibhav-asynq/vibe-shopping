@@ -1,0 +1,23 @@
+{
+  "openai": {
+    "model": "gpt-4o",
+    "temperature": 0.3,
+    "max_tokens": 500,
+    "timeout_seconds": 30
+  },
+  "confidence_thresholds": {
+    "llm_minimum": 0.3,
+    "rule_boost_minimum": 0.5,
+    "final_output_minimum": 0.4
+  },
+  "processing": {
+    "max_retries": 3,
+    "enable_rule_enhancement": true,
+    "enable_logging": true
+  },
+  "attribute_validation": {
+    "strict_schema_validation": true,
+    "allow_unknown_attributes": false,
+    "auto_correct_typos": false
+  }
+}

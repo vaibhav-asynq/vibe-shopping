@@ -1,0 +1,239 @@
+{
+  "style_vibes": {
+    "elevated date-night shine": {
+      "fit": ["Body hugging"],
+      "fabric": ["Satin", "Velvet", "Silk"],
+      "occasion": ["Evening", "Party"],
+      "confidence_boost": 0.9,
+      "reasoning": "Date night requires elegant, form-fitting fabrics that catch light"
+    },
+    "comfy lounge": {
+      "fit": ["Relaxed"],
+      "sleeve_length": ["Short sleeves"],
+      "occasion": ["Everyday"],
+      "fabric": ["Modal jersey", "Cotton", "Bamboo jersey"],
+      "confidence_boost": 0.8,
+      "reasoning": "Comfort-focused casual wear with soft, breathable materials"
+    },
+    "office-ready polish": {
+      "fabric": ["Cotton poplin", "Cotton-blend", "Wool-blend"],
+      "neckline": ["Collar"],
+      "occasion": ["Work"],
+      "fit": ["Tailored"],
+      "confidence_boost": 0.9,
+      "reasoning": "Professional workplace attire with structured, polished appearance"
+    },
+    "flowy garden-party": {
+      "fit": ["Relaxed", "Flowy"],
+      "fabric": ["Chiffon", "Linen"],
+      "sleeve_length": ["Short flutter sleeves"],
+      "color_or_print": ["Pastel floral", "Watercolor petals"],
+      "occasion": ["Party"],
+      "confidence_boost": 0.8,
+      "reasoning": "Outdoor party requires breathable, feminine fabrics with movement"
+    },
+    "elevated evening glam": {
+      "fit": ["Body hugging", "Bodycon"],
+      "fabric": ["Satin", "Silk", "Sequined mesh"],
+      "sleeve_length": ["Sleeveless"],
+      "color_or_print": ["Sapphire blue", "Black iridescent"],
+      "occasion": ["Party", "Evening"],
+      "length": ["Midi", "Mini", "Short"],
+      "confidence_boost": 0.9,
+      "reasoning": "Evening glamour requires luxurious fabrics and sophisticated silhouettes"
+    },
+    "beachy vacay": {
+      "fit": ["Relaxed"],
+      "fabric": ["Linen", "Cotton gauze"],
+      "sleeve_length": ["Spaghetti straps", "Sleeveless"],
+      "color_or_print": ["Seafoam green", "Soft teal"],
+      "occasion": ["Vacation"],
+      "confidence_boost": 0.9,
+      "reasoning": "Beach vacation needs lightweight, breezy materials in ocean-inspired colors"
+    },
+    "retro 70s": {
+      "fit": ["Body hugging"],
+      "fabric": ["Stretch crepe", "Poly-crepe"],
+      "sleeve_length": ["Cap sleeves"],
+      "color_or_print": ["Geometric print", "Multicolor mosaic print"],
+      "confidence_boost": 0.7,
+      "reasoning": "70s style emphasizes fitted silhouettes with bold, geometric patterns"
+    }
+  },
+  "mood_vibes": {
+    "flowy": {
+      "fit": ["Relaxed", "Flowy"],
+      "fabric": ["Chiffon", "Linen", "Cotton gauze"],
+      "confidence_boost": 0.9,
+      "reasoning": "Flowy directly indicates loose, relaxed fit with movement"
+    },
+    "bodycon": {
+      "fit": ["Body hugging", "Bodycon"],
+      "confidence_boost": 0.95,
+      "reasoning": "Bodycon explicitly means body-hugging fit"
+    },
+    "sleek": {
+      "fit": ["Slim", "Sleek and straight"],
+      "fabric": ["Stretch denim", "Polyester twill"],
+      "confidence_boost": 0.8,
+      "reasoning": "Sleek indicates streamlined, fitted silhouette"
+    },
+    "breathable": {
+      "fabric": ["Linen", "Cotton", "Bamboo jersey", "Tencel"],
+      "confidence_boost": 0.8,
+      "reasoning": "Breathable fabrics for comfort and airflow"
+    },
+    "luxurious": {
+      "fabric": ["Velvet", "Silk", "Satin", "Silk chiffon"],
+      "occasion": ["Party", "Evening"],
+      "confidence_boost": 0.8,
+      "reasoning": "Luxury fabrics for special occasions"
+    },
+    "metallic": {
+      "fabric": ["Lamé", "Sequined mesh"],
+      "color_or_print": ["Silver metallic", "Bronze metallic"],
+      "occasion": ["Party", "Evening"],
+      "confidence_boost": 0.9,
+      "reasoning": "Metallic elements for party and evening glamour"
+    },
+    "comfortable": {
+      "fit": ["Relaxed", "Stretch to fit"],
+      "fabric": ["Modal jersey", "Bamboo jersey", "Cotton", "Ribbed jersey"],
+      "occasion": ["Everyday"],
+      "confidence_boost": 0.8,
+      "reasoning": "Comfort prioritizes soft, stretchy, easy-wearing materials"
+    },
+    "edgy": {
+      "color_or_print": ["Jet black", "Charcoal", "Deep indigo"],
+      "fabric": ["Vegan leather", "Denim"],
+      "fit": ["Body hugging", "Slim"],
+      "confidence_boost": 0.7,
+      "reasoning": "Edgy style uses dark colors and structured materials"
+    },
+    "romantic": {
+      "fabric": ["Lace overlay", "Chiffon", "Silk"],
+      "color_or_print": ["Blush pink", "Dusty rose", "Lavender"],
+      "sleeve_length": ["Short flutter sleeves", "Bishop sleeves"],
+      "confidence_boost": 0.8,
+      "reasoning": "Romantic style features soft fabrics and feminine details"
+    },
+    "playful": {
+      "color_or_print": ["Pastel pink", "Sunflower yellow", "Coral stripe"],
+      "fit": ["Relaxed", "Flowy"],
+      "confidence_boost": 0.7,
+      "reasoning": "Playful style uses bright, cheerful colors and fun silhouettes"
+    }
+  },
+  "occasion_vibes": {
+    "brunch": {
+      "occasion": ["Everyday"],
+      "fit": ["Relaxed", "Tailored"],
+      "fabric": ["Cotton", "Linen", "Cotton-blend"],
+      "confidence_boost": 0.8,
+      "reasoning": "Brunch calls for casual yet put-together looks"
+    },
+    "date night": {
+      "occasion": ["Evening", "Party"],
+      "fit": ["Body hugging", "Tailored"],
+      "fabric": ["Satin", "Silk", "Velvet"],
+      "confidence_boost": 0.9,
+      "reasoning": "Date night requires attractive, sophisticated styling"
+    },
+    "weekend": {
+      "occasion": ["Everyday"],
+      "fit": ["Relaxed", "Stretch to fit"],
+      "fabric": ["Cotton", "Modal jersey", "Bamboo jersey"],
+      "confidence_boost": 0.8,
+      "reasoning": "Weekend wear prioritizes comfort and ease"
+    },
+    "vacation": {
+      "occasion": ["Vacation"],
+      "fabric": ["Linen", "Cotton", "Cotton gauze"],
+      "fit": ["Relaxed", "Flowy"],
+      "confidence_boost": 0.9,
+      "reasoning": "Vacation clothes need to be comfortable and travel-friendly"
+    },
+    "wedding guest": {
+      "occasion": ["Party", "Evening"],
+      "fabric": ["Chiffon", "Silk", "Lace overlay"],
+      "fit": ["Tailored", "Flowy"],
+      "length": ["Midi", "Maxi"],
+      "confidence_boost": 0.8,
+      "reasoning": "Wedding guest attire should be elegant and appropriate"
+    },
+    "client presentation": {
+      "occasion": ["Work"],
+      "fabric": ["Cotton poplin", "Wool-blend", "Cotton-blend"],
+      "fit": ["Tailored"],
+      "neckline": ["Collar", "V neck"],
+      "confidence_boost": 0.9,
+      "reasoning": "Professional presentations require polished, authoritative appearance"
+    }
+  },
+  "color_vibes": {
+    "pastel": {
+      "color_or_print": ["Pastel pink", "Pastel yellow", "Pastel coral", "Pastel floral", "Blush pink", "Lavender"],
+      "confidence_boost": 0.8,
+      "reasoning": "Pastel indicates soft, light, feminine colors"
+    },
+    "bold": {
+      "color_or_print": ["Ruby red", "Cobalt blue", "Emerald green", "Sunflower yellow"],
+      "confidence_boost": 0.7,
+      "reasoning": "Bold colors make a strong visual statement"
+    },
+    "neutral": {
+      "color_or_print": ["Off-white", "Charcoal", "Sage green", "Sand beige", "Stone beige", "Warm taupe"],
+      "confidence_boost": 0.8,
+      "reasoning": "Neutral colors are versatile and understated"
+    },
+    "dark": {
+      "color_or_print": ["Jet black", "Midnight navy", "Deep indigo", "Charcoal", "Storm grey"],
+      "confidence_boost": 0.8,
+      "reasoning": "Dark colors create sophisticated, slimming effects"
+    },
+    "bright": {
+      "color_or_print": ["Sunflower yellow", "Coral stripe", "Emerald green", "Cobalt blue"],
+      "confidence_boost": 0.7,
+      "reasoning": "Bright colors are energetic and attention-grabbing"
+    },
+    "earth tones": {
+      "color_or_print": ["Terracotta", "Olive green", "Mustard yellow", "Sand beige", "Warm taupe"],
+      "confidence_boost": 0.8,
+      "reasoning": "Earth tones are natural, grounding colors"
+    }
+  },
+  "season_vibes": {
+    "summer": {
+      "fabric": ["Linen", "Cotton", "Cotton gauze", "Tencel"],
+      "sleeve_length": ["Sleeveless", "Short sleeves", "Spaghetti straps"],
+      "color_or_print": ["Seafoam green", "Sunflower yellow", "Soft teal"],
+      "confidence_boost": 0.8,
+      "reasoning": "Summer requires breathable fabrics and lighter coverage"
+    },
+    "winter": {
+      "fabric": ["Wool-blend", "Velvet", "Tweed"],
+      "sleeve_length": ["Long sleeves", "Long sleeves with button cuffs"],
+      "color_or_print": ["Deep indigo", "Charcoal", "Storm grey"],
+      "confidence_boost": 0.8,
+      "reasoning": "Winter needs warmer fabrics and more coverage"
+    }
+  },
+  "fit_vibes": {
+    "fitted": {
+      "fit": ["Body hugging", "Tailored", "Slim"],
+      "confidence_boost": 0.9,
+      "reasoning": "Fitted indicates close-to-body silhouette"
+    },
+    "loose": {
+      "fit": ["Relaxed", "Oversized"],
+      "confidence_boost": 0.9,
+      "reasoning": "Loose indicates roomy, comfortable fit"
+    },
+    "structured": {
+      "fit": ["Tailored"],
+      "fabric": ["Cotton poplin", "Wool-blend", "Cotton-blend"],
+      "confidence_boost": 0.8,
+      "reasoning": "Structured indicates crisp, defined silhouette"
+    }
+  }
+}
